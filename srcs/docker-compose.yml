@@ -1,34 +1,16 @@
 version: '3'
 
-services:  # images to creat and CONTAINER to run (start) 
-  # S/ database layer for wordpress >> MySQL Database
-  mysql_database: # namaing of my container
-    # Specifications
-    image: mysql
-    restart: always
-    environment: # env var
-      MYSQL_ROOT_PASSWORD: 122ROOT
-      MYSQL_DATABASE: wp_db # naming
-      MYSQL_USER: wp_user # ----
-      MYSQL_PASSWORD: 122USER
-    volumes:
-      - mysql:/var/lib/mysql
-  # S/ database layer for wordpress >> MySQL Database
-  wordpress:
-    depends_on: # rely on (services), ?? 
-      - mysql_database
-    image: wordpress:latest
-    restart: always
-    ports:
-      - 8000:80
-    environment:
-      WORDPRESS_DB_HOST: mysql_database:3306
-      WORDPRESS_DB_USER: wp_user
-      WORDPRESS_DB_PASSWORD: 122USER
-      WORDPRESS_DB_NAME: wp_db
-    volumes:
-      - wordpress:/var/www/html
-volumes:
-  mysql:
-  wordpress:
-    
+services:
+  # [ conatiners ]
+  nginx:
+    # [ section ]
+    build: requirements/nginx
+      # [ attribute ]
+      # dockerfile:
+  # wordpress:
+  #   build: requirements/wordpress
+  # mariadb:
+  #   build: requirements/mariaDB
+
+
+
