@@ -1,16 +1,54 @@
 version: '3'
 
+# directive:
+
 services:
-  # [ conatiners ]
   nginx:
-    # [ section ]
-    build: requirements/nginx
-      # [ attribute ]
-      # dockerfile:
-  # wordpress:
-  #   build: requirements/wordpress
-  # mariadb:
-  #   build: requirements/mariaDB
+  # [ section ]
+    container_name: Nginx
+    build: 
+    # [ attribute ]
+      dockerfile: requirements/nginx/Dockerfile
+    restart: always
+    ports:
+      - 443:80
+    expose:
+      - 9000
+    networks:
+      - net.exposed
+  
+  wordpress:
+    container_name: Wordpress
+    build: requirements/wordpress
+    restart: always
+    expose: 
+      - 9000
+      - 3306
+    networks:
+      - net.exposed
+    volumes:
+      - db.wp:${SM_PATH}
+  
+  mariadb:
+    container_name: mariaDB
+    build: requirements/mariaDB
+    env_file:
+      - .env
+    restart: always
+    expose:
+      - 3306
+    networks:
+      - net.exposed
+    volumes:
+      - db.wsite:${SM_PATH}
 
 
-
+networks:
+  net.exposed:
+    driver: "bridge"
+  
+volumes:
+  db.wp:
+    name: wordpress_files
+  db.wsite:
+    name: websites_files
