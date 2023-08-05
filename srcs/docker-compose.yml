@@ -1,54 +1,26 @@
-version: '3'
+#
+  #___________________________________________________________________________#
+  #
+  # # docker compose /`> yml file
+  #---------------------------------------------------------------------------#
 
-# directive:
+version: '3.8'
 
 services:
   nginx:
-  # [ section ]
-    container_name: Nginx
-    build: 
-    # [ attribute ]
-      dockerfile: requirements/nginx/Dockerfile
-    restart: always
+    container_name: cn_nginx
+    build:
+      context: requirements/nginx
+      dockerfile: Dockerfile
     ports:
-      - 443:80
-    expose:
-      - 9000
-    networks:
-      - net.exposed
-  
-  wordpress:
-    container_name: Wordpress
-    build: requirements/wordpress
-    restart: always
-    expose: 
-      - 9000
-      - 3306
-    networks:
-      - net.exposed
+      - "443:443"
     volumes:
-      - db.wp:${SM_PATH}
-  
-  mariadb:
-    container_name: mariaDB
-    build: requirements/mariaDB
-    env_file:
-      - .env
+      - /var/www:/var/www/
     restart: always
-    expose:
-      - 3306
     networks:
-      - net.exposed
-    volumes:
-      - db.wsite:${SM_PATH}
+      - ince
 
 
 networks:
-  net.exposed:
-    driver: "bridge"
-  
-volumes:
-  db.wp:
-    name: wordpress_files
-  db.wsite:
-    name: websites_files
+  ince:
+    driver: bridge

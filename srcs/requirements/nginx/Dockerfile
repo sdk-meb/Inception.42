@@ -1,19 +1,19 @@
-#! DOCKER_FILE
+#===============================================#
 
-# ARGS
-ARG	VERSION=latest
+FROM debian:stable
 
-# instruction _FROM_ / 
-    # which Parent image will build from it
-FROM debian:$VERSION
+RUN	apt update &&\
+    apt upgrade &&\
+    apt install nginx --yes 
+RUN yes | apt install curl
 
-# instruction _RUN_ /
-    # RUN COMMAND/S and commit it inside image's
-RUN apt update \ 
-    && \
-    apt install nginx nginx-common --yes
+EXPOSE 443
 
-COPY  /tools/wordpress.conf  /etc/nginx/conf.d
+WORKDIR /etc/nginx
 
-CMD /bin/sh
+COPY  ./tools/ssl  ssl
+COPY  ./conf/  conf.d/
+COPY ./tools/nginx.sh tools/
 
+
+CMD ["sh", "tools/nginx.sh", ""]

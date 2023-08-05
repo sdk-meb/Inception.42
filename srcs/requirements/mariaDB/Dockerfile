@@ -1,12 +1,11 @@
-#! DOCKER_FILE
+#===============================================#
 
-ARG	VERSION=latest
+FROM debian:stable
 
-FROM debian:$VERSION
+RUN	apt update &&\
+    apt upgrade &&\
+    yes | apt install mariadb mariadb-client
 
-RUN apt update && \
-    apt install mariadb-server --yes
+EXPOSE 44
 
-
-CMD /bin/sh -c mysql_secure_installation
-
+CMD ["sh", "tools/nginx.sh", ""]
