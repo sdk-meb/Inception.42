@@ -1,19 +1,22 @@
-#===============================================#
+#===================================================================#
+# Docker image building that contains NGINX with TLSv1.2 or TLSv1.3
+#        server:  { web-server } required
+#===============================================================#
 
+# deb-OS as base 
 FROM debian:stable
 
+# base floor
 RUN	apt update &&\
-    apt upgrade &&\
-    apt install nginx --yes 
-RUN yes | apt install curl
+    apt upgrade
 
-EXPOSE 443
+RUN apt install -y nginx tini
 
-WORKDIR /etc/nginx
+# WORKDIR /etc/nginx
 
-COPY  ./tools/ssl  ssl
-COPY  ./conf/  conf.d/
-COPY ./tools/nginx.sh tools/
+COPY ./conf/nginx.conf /etc/nginx/conf.d/nginx.conf
+COPY ./tools/ssl /etc/nginx
 
+ENTRYPOINT ["/usr/bin/tini", "--"]
 
-CMD ["sh", "tools/nginx.sh", ""]
+CMD ["nginx", "-g", "daemon off;"]

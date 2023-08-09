@@ -1,26 +1,71 @@
 #
-  #___________________________________________________________________________#
-  #
-  # # docker compose /`> yml file
   #---------------------------------------------------------------------------#
-
+   #
+    # # docker compose /`> yml file
+   #
+  #----------------------------------------------------------------------#
+#
 version: '3.8'
 
 services:
-  nginx:
-    container_name: cn_nginx
+
+  ginx:
+    container_name: ginx
+    restart: on-failure
     build:
-      context: requirements/nginx
+      context: $services_path/nginx
       dockerfile: Dockerfile
+    env_file: .env
     ports:
       - "443:443"
+    depends_on:
+      - ordpress
     volumes:
-      - /var/www:/var/www/
-    restart: always
+      - wp-db:/var/www/wordpress
     networks:
-      - ince
+      - inc@net
 
+  ariadb:
+    container_name: ariadb
+    restart: on-failure
+    build: $services_path/mariaDB
+    env_file: .env
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - inc@net
+
+  ordpress:
+    container_name: ordpress
+    depends_on:
+      - ariadb
+    env_file:
+      - .env
+    restart: on-failure
+    build: $services_path/wordpress
+    volumes:
+      - wp-db:/var/www/wordpress
+    networks:
+      - inc@net
+
+volumes:
+  #  WordPress database
+  wp-db:
+    name: wp-db
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /tmp/data/mariadb
+  # WordPress website
+  db:
+    name: ws-db
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /tmp/data/wordpress
 
 networks:
-  ince:
-    driver: bridge
+  inc@net:
+    name: inc@net

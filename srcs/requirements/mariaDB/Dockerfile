@@ -1,11 +1,21 @@
-#===============================================#
+#=======================================================================#
+# Docker image made-up by debian as base and mariadb (mysql)
+#     server:  { DATA-BASE }  required
+#====================================================================#
 
-FROM debian:stable
+# deb-OS as base 
+FROM debian:buster
 
+# base floor
 RUN	apt update &&\
-    apt upgrade &&\
-    yes | apt install mariadb mariadb-client
+    apt upgrade
 
-EXPOSE 44
+RUN apt install mariadb-server mariadb-client -y
 
-CMD ["sh", "tools/nginx.sh", ""]
+EXPOSE 3306
+
+COPY ./conf/creat_db.sh /tmp/creat_db.sh
+
+ENTRYPOINT ["sh", "/tmp/creat_db.sh"]
+
+CMD ["mysqld"]
