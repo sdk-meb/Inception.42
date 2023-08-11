@@ -3,18 +3,16 @@
 #     server:  { DATA-BASE }  required
 #====================================================================#
 
-# deb-OS as base 
-FROM debian:buster
+# debian as floor base
+FROM floor:latest
 
-# base floor
-RUN	apt update &&\
-    apt upgrade
+COPY ./conf/creat_db.sh /tmp/creat_db.sh
+RUN apt install -y mariadb-server mariadb-client &&\
+	chmod +x /tmp/creat_db.sh
 
-RUN apt install mariadb-server mariadb-client -y
 
 EXPOSE 3306
 
-COPY ./conf/creat_db.sh /tmp/creat_db.sh
 
 ENTRYPOINT ["sh", "/tmp/creat_db.sh"]
 

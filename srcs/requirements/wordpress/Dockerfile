@@ -5,12 +5,8 @@
 #               - { php-fpm } helpful /
 #=====================================================================#
 
-# deb-OS as base 
-FROM debian:buster
-
-# base floor
-RUN	apt update &&\
-    apt upgrade
+# debian as floor base
+FROM floor:latest
 
 RUN apt install --yes \
         curl mariadb-server \
@@ -24,7 +20,7 @@ RUN curl -LOk https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-c
     ln wp-cli.phar /usr/local/bin/wp
 
 COPY ./conf/wp-config-creat.sh /tmp/wp.sh
-
+RUN chmod 777 /tmp/wp.sh
 
 EXPOSE 9000
 

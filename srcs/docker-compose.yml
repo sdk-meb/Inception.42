@@ -9,8 +9,9 @@ version: '3.8'
 
 services:
 
-  ginx:
-    container_name: ginx
+  nginx:
+    image: nginx:wp
+    container_name: nginx
     restart: on-failure
     build:
       context: $services_path/nginx
@@ -19,14 +20,15 @@ services:
     ports:
       - "443:443"
     depends_on:
-      - ordpress
+      - wordpress
     volumes:
       - wp-db:/var/www/wordpress
     networks:
       - inc@net
 
-  ariadb:
-    container_name: ariadb
+  mariadb:
+    image: mariadb:wp
+    container_name: mariadb
     restart: on-failure
     build: $services_path/mariaDB
     env_file: .env
@@ -35,10 +37,11 @@ services:
     networks:
       - inc@net
 
-  ordpress:
-    container_name: ordpress
+  wordpress:
+    image: wordpress:item
+    container_name: wordpress
     depends_on:
-      - ariadb
+      - mariadb
     env_file:
       - .env
     restart: on-failure

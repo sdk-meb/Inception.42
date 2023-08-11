@@ -42,20 +42,7 @@ if [ ! -e /var/www/wordpress/wp-config.php ]; then
         --user_pass="$WP_USER_PASS" \
         --role=author
 
-    # 
     wp theme install twentytwentytwo --activate --allow-root
-    # 
-    # wp plugin install redis-cache --activate --allow-root
-    # # 
-    # wp redis enable --allow-root
-    # # When set to true, it enables the use of Redis as the object cache.
-    # wp config set --type=constant --allow-root --raw WP_CACHE true
-    # # Redis server hostname or IP address
-    # wp config set --type=constant --allow-root --raw WP_REDIS_HOST redis
-    # # Redis server port number.
-    # wp config set --type=constant --allow-root --raw WP_REDIS_PORT 6379
-    # # Redis connection protocol
-    # wp config set --type=constant --allow-root --raw WP_REDIS_SCHEME tcp
 
     chown -R www-data:www-data /var/www/wordpress
 fi

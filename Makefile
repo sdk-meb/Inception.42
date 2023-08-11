@@ -5,13 +5,14 @@ export YAML
 export NAME
 export DETACH
 
-
 build:
-	@mkdir -p /tmp/dataa/wordpress
-	@mkdir -p /tmp/dataa/mariadb
+	@docker build --tag=floor srcs/requirements/tools
+	@mkdir -p /tmp/data/wordpress
+	@mkdir -p /tmp/data/mariadb
 	@printf "Building configuration ${NAME}...\n"
 	@export services_path="$(PWD)/srcs/requirements"; \
 	docker compose -f $(YAML) up --build ${DETACH}
+
 
 up:
 	@printf " up ${NAME}...\n"
@@ -21,7 +22,13 @@ ${NAME}: build
 
 clean: down
 	@printf "cleaning ... \n"
-	@docker system prune
+	@yes | { \
+		\
+		docker container prune; \
+  		docker image prune --all; \
+    	docker network prune; \
+    	docker volume prune; \
+	}
 
 down:
 	@export services_path="$(PWD)/srcs/requirements"; \
@@ -32,8 +39,7 @@ re: clean all
 
 fclean: clean
 	@printf "Remove unused docker data ...\n"
-	@yes | docker system prune --all --volumes
-	@docker network prune --force
+	@docker system prune --all --volumes --force
 	@sudo rm -rf /tmp/dataa
 
 
