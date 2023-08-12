@@ -6,8 +6,7 @@
 # deb-OS as base 
 FROM floor:latest
 
-
-RUN apt install -y nginx tini 
+RUN apt install -y nginx tini  
 #openssl
 
 # RUN mkdir -p /etc/nginx/ssl/ && \
@@ -17,11 +16,11 @@ RUN apt install -y nginx tini
 #         -keyout /etc/nginx/ssl/mes-sadk.42.fr.key \
 #         -out /etc/nginx/ssl/mes-sadk.42.fr.crt
 # WORKDIR /etc/nginx
-
-COPY ./conf/nginx.conf /etc/nginx/conf.d/nginx.conf
-COPY ./tools/ssl /etc/nginx/ssl
-
 EXPOSE 443
+
+COPY ./tools/ssl /etc/nginx/ssl
+COPY ./conf/nginx.conf /etc/nginx/conf.d/nginx.conf
+
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 

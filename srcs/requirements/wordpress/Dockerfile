@@ -16,13 +16,14 @@ RUN apt install --yes \
         php7.3-cli 
 
 RUN curl -LOk https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
-    chmod o+x wp-cli.phar && \
-    ln wp-cli.phar /usr/local/bin/wp
+        chmod o+x wp-cli.phar && \
+        ln wp-cli.phar /usr/local/bin/wp
+
+EXPOSE 9000
 
 COPY ./conf/wp-config-creat.sh /tmp/wp.sh
 RUN chmod 777 /tmp/wp.sh
 
-EXPOSE 9000
 
 ENTRYPOINT ["sh", "/tmp/wp.sh"]
 

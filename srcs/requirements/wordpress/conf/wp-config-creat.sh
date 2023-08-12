@@ -1,4 +1,4 @@
-#! /usr/bin/sh
+#! /usr/bin/bash
 
 if [ ! -d /run/php ]; then
     mkdir -p /run/php
@@ -42,6 +42,7 @@ if [ ! -e /var/www/wordpress/wp-config.php ]; then
         --user_pass="$WP_USER_PASS" \
         --role=author
 
+    # 
     wp theme install twentytwentytwo --activate --allow-root
 
     chown -R www-data:www-data /var/www/wordpress

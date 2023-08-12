@@ -6,12 +6,12 @@
 # debian as floor base
 FROM floor:latest
 
-COPY ./conf/creat_db.sh /tmp/creat_db.sh
-RUN apt install -y mariadb-server mariadb-client &&\
-	chmod +x /tmp/creat_db.sh
-
+RUN apt install -y mariadb-server mariadb-client
 
 EXPOSE 3306
+
+COPY ./conf/creat_db.sh /tmp/creat_db.sh
+RUN	chmod +x /tmp/creat_db.sh
 
 
 ENTRYPOINT ["sh", "/tmp/creat_db.sh"]

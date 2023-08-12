@@ -3,22 +3,24 @@ include srcs/.env
 
 export YAML
 export NAME
-export DETACH
+
+CMD=$(cmd)
+
+${CMD}:
+	@printf " $(CMD) ${NAME}...\n"
+	@export services_path="$(PWD)/srcs/requirements"; \
+	docker compose -f $(YAML) $(CMD)
+
+${NAME}: build
 
 build:
 	@docker build --tag=floor srcs/requirements/tools
-	@mkdir -p /tmp/data/wordpress
-	@mkdir -p /tmp/data/mariadb
 	@printf "Building configuration ${NAME}...\n"
 	@export services_path="$(PWD)/srcs/requirements"; \
-	docker compose -f $(YAML) up --build ${DETACH}
+	docker compose -f $(YAML) up --build 
+#--detach
 
-
-up:
-	@printf " up ${NAME}...\n"
-	@docker compose -f $(YAML) up
-
-${NAME}: build
+all: build
 
 clean: down
 	@printf "cleaning ... \n"
@@ -32,16 +34,17 @@ clean: down
 
 down:
 	@export services_path="$(PWD)/srcs/requirements"; \
-	docker compose -f $(YAML) down
+	docker compose -f $(YAML) down --volumes
+	@sudo rm -rf /tmp/data
 	@printf "${NAME} down! \n"
+	@mkdir -p /tmp/data/wordpress
+	@mkdir -p /tmp/data/mariadb
 
 re: clean all
+
+.PHONY: all down re clean fclean build
 
 fclean: clean
 	@printf "Remove unused docker data ...\n"
 	@docker system prune --all --volumes --force
-	@sudo rm -rf /tmp/dataa
 
-
-
-.PHONY: all down re clean fclean build
