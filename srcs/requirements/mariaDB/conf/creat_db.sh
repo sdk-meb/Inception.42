@@ -1,47 +1,35 @@
 #! /usr/bin/sh
 
+if [ ! -d /var/lib/mysql/$db_name ]; then
 
-sed -i "/bind-address/s/127.0.0.1/0.0.0.0/g" /etc/mysql/mariadb.conf.d/50-server.cnf
+    sed -i "/bind-address/s/127.0.0.1/0.0.0.0/g" /etc/mysql/mariadb.conf.d/50-server.cnf
+    service mysql start
 
-if [ ! -d /var/lib/mysql/$WP_DB_NAME ]; then
+#   new database creation
+    mysql -u root --execute="CREATE DATABASE IF NOT EXISTS $db_name;"
 
-# if [ false ]; then
-#     service mysql start
-#     mysql -e "CREATE DATABASE IF NOT EXISTS ${database_name};"
-#     mysql -e "CREATE USER '${mysql_user}'@'%' IDENTIFIED BY '${mysql_password}';"
-#     mysql -e "GRANT ALL PRIVILEGES ON ${database_name}.* TO '${mysql_user}'@'%';"
-#     mysql -u${mysql_root_user} -p${mysql_root_password} -e "ALTER USER '${mysql_root_user}'@'localhost' IDENTIFIED BY '${mysql_root_password}';"
-#     mysql -e "FLUSH PRIVILEGES;"
-#     mysqladmin -u${mysql_root_user} -p${mysql_root_password} shutdown
-# else
-    # Start the mysql service
-    service mysql start &
-    wait $!
+#   also new user by it id-pass
+    # listen host part specifies the host from which the user is allowed to connect
+    mysql -u root -e "CREATE USER '$db_user_name'@'$listen_host' IDENTIFIED BY '${db_user_passwd}';"
 
-    # Create a new mariadb database
-    mysql -u root -e "CREATE DATABASE $WP_DB_NAME;"
+# Grant the newly created user all permissions
+    mysql -u root -e "GRANT ALL PRIVILEGES ON $db_name.* TO '$db_user_name'@'$listen_host';"
 
-    # Create a new mariadb user
-    mysql -u root -e "CREATE USER '$WP_DB_USER'@'%' IDENTIFIED BY '$WP_DB_PASS';"
+# Create a new user account
+    mysql -u root -e "CREATE USER '$db_admin_name'@'$listen_host' IDENTIFIED BY '$db_admin_passwd';"
 
-    # Grant all permissions related to the newly created db to the newly created used
-    mysql -u root -e "GRANT ALL PRIVILEGES ON $WP_DB_NAME.* TO '$WP_DB_USER'@'%';"
+# Grant the new user the same privileges as the existing root user
+    mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO '$db_admin_name'@'$listen_host' WITH GRANT OPTION;"
+                        #IDENTIFIED BY '$db_admin_passwd'\
 
-    # Create a new user account
-    mysql -u root -e "CREATE USER '$MDB_ROOT_USER'@'%' IDENTIFIED BY '$MDB_ROOT_PASS';"
-
-    # Grant the new user the same privileges as the existing root user
-    mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO '$MDB_ROOT_USER'@'%' WITH GRANT OPTION;"
-
-    # Clears the in-memory cache of user and privilege information and reloads it from disk
+#  apply the changes
     mysql -u root -e "FLUSH PRIVILEGES;"
 
-    mysqladmin -u root password $MDB_ROOT_PASS
-
-    # Stop the mysql service
-    service mysql stop &
-    wait $!
-# fi
+    mysqladmin -u root password $db_admin_passwd
+    service mysql stop
 fi
 
-exec "$@" 
+exec $@
+
+#     mysql -u${mysql_root_user} -p${mysql_root_password} -e "...;"
+#     mysqladmin -u${mysql_root_user} -p${mysql_root_password} shutdown

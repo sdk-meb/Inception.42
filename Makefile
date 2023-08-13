@@ -13,6 +13,8 @@ ${CMD}:
 
 ${NAME}: build
 
+# ?? no detaching -> runs in the foreground
+# runs in the background as a detached process / 
 build:
 	@docker build --tag=floor srcs/requirements/tools
 	@printf "Building configuration ${NAME}...\n"
