@@ -10,10 +10,6 @@ RUN apt install -y mariadb-server mariadb-client
 
 EXPOSE 3306
 
-COPY ./conf/creat_db.sh /tmp/creat_db.sh
-RUN	chmod +x /tmp/creat_db.sh
+COPY ./conf/creat_db.sh /tmp/db.sh
 
-
-ENTRYPOINT ["sh", "/tmp/creat_db.sh"]
-
-CMD ["mysqld"]
+CMD ["sh", "/tmp/db.sh"]

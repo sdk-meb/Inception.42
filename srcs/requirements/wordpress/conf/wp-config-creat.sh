@@ -18,6 +18,7 @@ if [ ! -e /var/www/wordpress/wp-config.php ]; then
         --locale=en_US \
         --version=6.1.1
 
+    sleep 3 # waiting for databse configuration
     # Command that creates a wp-config.php file
     wp config create --allow-root \
         --dbhost="$WP_DB_HOST" \

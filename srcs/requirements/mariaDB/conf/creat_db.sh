@@ -6,30 +6,32 @@ if [ ! -d /var/lib/mysql/$db_name ]; then
     service mysql start
 
 #   new database creation
-    mysql -u root --execute="CREATE DATABASE IF NOT EXISTS $db_name;"
-
 #   also new user by it id-pass
-    # listen host part specifies the host from which the user is allowed to connect
-    mysql -u root -e "CREATE USER '$db_user_name'@'$listen_host' IDENTIFIED BY '${db_user_passwd}';"
+#   Grant the newly created user all permissions
+#   Create a new user account
+#   Grant the new user the same privileges as the existing root user
+#   apply the changes
+#  quit
 
-# Grant the newly created user all permissions
-    mysql -u root -e "GRANT ALL PRIVILEGES ON $db_name.* TO '$db_user_name'@'$listen_host';"
-
-# Create a new user account
-    mysql -u root -e "CREATE USER '$db_admin_name'@'$listen_host' IDENTIFIED BY '$db_admin_passwd';"
-
-# Grant the new user the same privileges as the existing root user
-    mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO '$db_admin_name'@'$listen_host' WITH GRANT OPTION;"
-                        #IDENTIFIED BY '$db_admin_passwd'\
-
-#  apply the changes
-    mysql -u root -e "FLUSH PRIVILEGES;"
+ # listen host part specifies the host from which the user is allowed to connect
+ # GRANT OPTION part privilege can potentially modify the access rights of other users
+ 
+# listen host part specifies the host from which the user is allowed to connect
+    echo  "CREATE DATABASE IF NOT EXISTS $db_name;
+            CREATE USER '$db_user_name'@'$listen_host' IDENTIFIED BY '${db_user_passwd}';
+            GRANT ALL PRIVILEGES ON $db_name.* TO '$db_user_name'@'$listen_host';
+            CREATE USER '$db_admin_name'@'$listen_host' IDENTIFIED BY '$db_admin_passwd';
+            GRANT ALL PRIVILEGES ON *.* TO '$db_admin_name'@'$listen_host' IDENTIFIED BY \
+            '$db_admin_passwd' WITH GRANT OPTION;
+            FLUSH PRIVILEGES;
+            FLUSH PRIVILEGES;
+            \q
+    " | mysql -u root
 
     mysqladmin -u root password $db_admin_passwd
-    service mysql stop
+
+    sleep 1
+    service mysql stop 
 fi
 
-exec $@
-
-#     mysql -u${mysql_root_user} -p${mysql_root_password} -e "...;"
-#     mysqladmin -u${mysql_root_user} -p${mysql_root_password} shutdown
+exec mysqld $@
