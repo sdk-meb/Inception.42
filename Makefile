@@ -16,11 +16,12 @@ ${NAME}: build
 # ?? no detaching -> runs in the foreground
 # runs in the background as a detached process / 
 build:
-	@docker build --tag=floor srcs/requirements/tools
+	@mkdir -p --mode=766 /tmp/data/wordpress
+	@mkdir -p --mode=766 /tmp/data/mariadb
+	@docker build --tag=floor:latest srcs/requirements/tools
 	@printf "Building configuration ${NAME}...\n"
 	@export services_path="$(PWD)/srcs/requirements"; \
-	docker compose -f $(YAML) up --build 
-#--detach
+	docker compose -f $(YAML) up --build --detach
 
 all: build
 
@@ -39,8 +40,6 @@ down:
 	docker compose -f $(YAML) down --volumes
 	@sudo rm -rf /tmp/data
 	@printf "${NAME} down! \n"
-	@mkdir -p /tmp/data/wordpress
-	@mkdir -p /tmp/data/mariadb
 
 re: clean all
 

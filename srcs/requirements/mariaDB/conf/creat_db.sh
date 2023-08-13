@@ -3,7 +3,7 @@
 if [ ! -d /var/lib/mysql/$db_name ]; then
 
     sed -i "/bind-address/s/127.0.0.1/0.0.0.0/g" /etc/mysql/mariadb.conf.d/50-server.cnf
-    service mysql start
+    service mariadb start
 
 #   new database creation
 #   also new user by it id-pass
@@ -28,10 +28,12 @@ if [ ! -d /var/lib/mysql/$db_name ]; then
             \q
     " | mysql -u root
 
-    mysqladmin -u root password $db_admin_passwd
+    # mysqladmin -u root password $db_admin_passwd
+    # mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$db_admin_passwd';" 
+    # mysql -u root -e "FLUSH PRIVILEGES;"
 
     sleep 1
-    service mysql stop 
+    service mariadb stop 
 fi
 
-exec mysqld $@
+exec mysqld

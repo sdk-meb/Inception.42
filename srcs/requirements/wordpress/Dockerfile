@@ -9,15 +9,17 @@
 FROM floor:latest
 
 RUN apt install --yes \
-        curl mariadb-server \
-        php7.3 php7.3-cgi \
-        php7.3-fpm php7.3-mysql php7.3-gd php7.3-curl \
-        php7.3-xml php7.3-mbstring php7.3-zip php7.3-pdo \
-        php7.3-cli 
+        curl mariadb-server
 
 RUN curl -LOk https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
         chmod o+x wp-cli.phar && \
         ln wp-cli.phar /usr/local/bin/wp
+
+RUN  apt install --yes \
+        php7.4 php7.4-cgi \
+        php7.4-fpm php7.4-mysql php7.4-gd php7.4-curl \
+        php7.4-xml php7.4-mbstring php7.4-zip php7.4-pdo \
+        php7.4-cli 
 
 EXPOSE 9000
 
@@ -28,4 +30,4 @@ RUN chmod 777 /tmp/wp.sh
 ENTRYPOINT ["sh", "/tmp/wp.sh"]
 
 # Start Wordpress-PHP service
-CMD [ "/usr/sbin/php-fpm7.3", "-F"]
+CMD [ "/usr/sbin/php-fpm7.4", "-F"]

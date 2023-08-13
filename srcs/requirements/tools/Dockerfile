@@ -4,7 +4,7 @@
 
 # deb-OS as
 #   base floor
-FROM debian:buster
+FROM debian:bullseye
 
 RUN	apt update &&\
-    apt upgrade
+    apt upgrade --yes
