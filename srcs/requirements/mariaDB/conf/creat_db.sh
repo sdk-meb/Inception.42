@@ -20,20 +20,23 @@ if [ ! -d /var/lib/mysql/$db_name ]; then
     echo  "CREATE DATABASE IF NOT EXISTS $db_name;
             CREATE USER '$db_user_name'@'$listen_host' IDENTIFIED BY '${db_user_passwd}';
             GRANT ALL PRIVILEGES ON $db_name.* TO '$db_user_name'@'$listen_host';
-            CREATE USER '$db_admin_name'@'$listen_host' IDENTIFIED BY '$db_admin_passwd';
-            GRANT ALL PRIVILEGES ON *.* TO '$db_admin_name'@'$listen_host' IDENTIFIED BY \
-            '$db_admin_passwd' WITH GRANT OPTION;
-            FLUSH PRIVILEGES;
             FLUSH PRIVILEGES;
             \q
     " | mysql -u root
 
-    # mysqladmin -u root password $db_admin_passwd
-    # mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$db_admin_passwd';" 
-    # mysql -u root -e "FLUSH PRIVILEGES;"
+    echo  " CREATE USER '$admin_name'@'$listen_host' IDENTIFIED BY '$admin_passwd';
+            GRANT ALL PRIVILEGES ON *.* TO '$admin_name'@'$listen_host' IDENTIFIED BY \
+            '$admin_passwd' WITH GRANT OPTION;
+            FLUSH PRIVILEGES;
+            \q
+    " | mysql -u root
+
+    mysql -u root -e "ALTER USER '$DB_root_name'@'localhost'\
+                        IDENTIFIED BY '$DB_root_passwd';" 
 
     sleep 1
     service mariadb stop 
+
 fi
 
 exec mysqld

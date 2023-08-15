@@ -1,52 +1,56 @@
 #! /usr/bin/bash
 
-if [ ! -d /run/php ]; then
-    mkdir -p /run/php
-    chmod 777 /run/php
+mkdir -p --mode=777 /run/php
+if [ ! -e /run/php/php7.4-fpm.pid ]; then
+    touch /run/php/php7.4-fpm.pid
 fi
-
-sed -i "s|listen = /run/php/php7.4-fpm.sock|listen = 0.0.0.0:9000|g" /etc/php/7.4/fpm/pool.d/www.conf
 
 if [ ! -e /var/www/wordpress/wp-config.php ]; then
-    # 
-    mkdir -p /var/www/wordpress
-    chmod -R 775 /var/www/wordpress
-    cd /var/www/wordpress
 
-    # 
-    wp core download --allow-root \
-        --locale=en_US \
-        --version=6.1.1
+# allow running the WP-CLI commands with the root user
+rootable=--allow-root
 
-    sleep 3 # waiting for databse configuration
-    # Command that creates a wp-config.php file
-    wp config create --allow-root \
-        --dbhost="$WP_DB_HOST" \
-        --dbname="$WP_DB_NAME" \
-        --dbuser="$WP_DB_USER" \
-        --dbpass="$WP_DB_PASS" \
-        --dbprefix=wp_
+#
+    sed -i "s|listen = /run/php/php7.4-fpm.sock|listen = 0.0.0.0:9000|g" /etc/php/7.4/fpm/pool.d/www.conf
 
-    # Command which installs WordPress while creating an admin for it
-    wp core install --allow-root \
-        --title='My Modest Blog' \
-        --url="$DOMAIN_NAME" \
-        --admin_user="$WP_ADMIN_USER" \
-        --admin_password="$WP_ADMIN_PASS" \
-        --admin_email="$WP_ADMIN_EMAIL" \
+#__ Download and install WordPress
+
+# Download 6.3 version of WordPress
+    wp core download $rootable \
+        --context=. \
+        --version=6.3 
+
+# waiting for databse configuration
+    # sleep 3 #  no--skip-ckeck 
+
+# Create a new wp-config.php file
+    wp config create $rootable \
+        --dbname="$db_name" \
+        --dbuser="$db_user_name" \
+        --dbpass="$db_user_passwd" \
+        --dbhost="$db_host"
+
+
+# Install WordPress 
+    wp core install $rootable \
+        --url=$DOMAIN_NAME \
+        --title=$titel \
+        --admin_user=$admin_name \
+        --admin_password=$admin_passwd \
+        --admin_email=$admin_mail \
         --skip-email
 
-    # Command that creates a user
-    wp user create --allow-root \
-        "$WP_USER_NAME" \
-        "$WP_USER_EMAIL" \
-        --user_pass="$WP_USER_PASS" \
-        --role=author
+    wp theme install $theme  $rootable --activate 
 
-    # 
-    wp theme install twentytwentytwo --activate --allow-root
+# Add a user as a super-admin
+    # is not multiset installation 
+    # wp super-admin add $admin_name $rootable
 
-    chown -R www-data:www-data /var/www/wordpress
+# Command that creates a user
+
+    wp user create $rootable \
+        $wp_user_name $wp_user_mail --role=$role \
+        --user_pass=$wp_user_passwd
 fi
 
-exec "$@"
+exec $@
