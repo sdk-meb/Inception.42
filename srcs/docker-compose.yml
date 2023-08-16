@@ -59,7 +59,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /tmp/data/mariadb
+      device: /home/mes-sadk/data/mariadb
   # WordPress website
   db:
     name: ws-db
@@ -67,7 +67,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /tmp/data/wordpress
+      device: /home/mes-sadk/data/wordpress
 
 networks:
   inc@net:

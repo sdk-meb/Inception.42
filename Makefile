@@ -16,8 +16,8 @@ ${NAME}: build
 # ?? no detaching -> runs in the foreground
 # runs in the background as a detached process / 
 build:
-	@mkdir -p --mode=766 /tmp/data/wordpress
-	@mkdir -p --mode=766 /tmp/data/mariadb
+	@mkdir -p --mode=766 /home/mes-sadk/data/wordpress
+	@mkdir -p --mode=766 /home/mes-sadk/data/mariadb
 	@docker build --tag=floor:latest srcs/requirements/tools
 	@printf "Building configuration ${NAME}...\n"
 	@export services_path="$(PWD)/srcs/requirements"; \
