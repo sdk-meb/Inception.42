@@ -8,8 +8,6 @@ if [ ! -d /var/lib/mysql/$db_name ]; then
 #   new database creation
 #   also new user by it id-pass
 #   Grant the newly created user all permissions
-#   Create a new user account
-#   Grant the new user the same privileges as the existing root user
 #   apply the changes
 #  quit
 
@@ -24,13 +22,7 @@ if [ ! -d /var/lib/mysql/$db_name ]; then
             \q
     " | mysql -u root
 
-    echo  " CREATE USER '$admin_name'@'$listen_host' IDENTIFIED BY '$admin_passwd';
-            GRANT ALL PRIVILEGES ON *.* TO '$admin_name'@'$listen_host' IDENTIFIED BY \
-            '$admin_passwd' WITH GRANT OPTION;
-            FLUSH PRIVILEGES;
-            \q
-    " | mysql -u root
-
+# set root password 
     mysql -u root -e "ALTER USER '$DB_root_name'@'localhost'\
                         IDENTIFIED BY '$DB_root_passwd';" 
 

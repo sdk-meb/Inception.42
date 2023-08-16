@@ -21,8 +21,7 @@ build:
 	@docker build --tag=floor:latest srcs/requirements/tools
 	@printf "Building configuration ${NAME}...\n"
 	@export services_path="$(PWD)/srcs/requirements"; \
-	docker compose -f $(YAML) up --build 
-#--detach
+	docker compose -f $(YAML) up --build --detach
 
 all: build
 

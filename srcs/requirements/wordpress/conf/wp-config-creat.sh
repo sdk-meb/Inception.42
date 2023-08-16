@@ -21,7 +21,7 @@ rootable=--allow-root
         --version=6.3 
 
 # waiting for databse configuration
-    # sleep 3 #  no--skip-ckeck 
+    sleep 3 #  no--skip-ckeck 
 
 # Create a new wp-config.php file
     wp config create $rootable \
