@@ -2,3 +2,6 @@
 en.subject.pdf
 
 .vscode
+
+.env
+**/.env
