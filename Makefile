@@ -3,6 +3,7 @@ include srcs/.env
 
 export YAML
 export NAME
+export USER
 
 CMD=$(cmd)
 
@@ -16,12 +17,12 @@ ${NAME}: build
 # ?? no detaching -> runs in the foreground
 # runs in the background as a detached process / 
 build:
-	@mkdir -p --mode=766 /home/mes-sadk/data/wordpress
-	@mkdir -p --mode=766 /home/mes-sadk/data/mariadb
+	@mkdir -p --mode=766 /home/$(USER)/data/wordpress
+	@mkdir -p --mode=766 /home/$(USER)/data/mariadb
 	@docker build --tag=floor:latest srcs/requirements/tools
 	@printf "Building configuration ${NAME}...\n"
 	@export services_path="$(PWD)/srcs/requirements"; \
-	docker compose -f $(YAML) up --build --detach
+	docker compose  --env-file srcs/.env -f $(YAML) up --build --detach
 
 all: build
 

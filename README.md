@@ -1,31 +1,58 @@
-<!DOCTYPE html>
+# Inception
+### system administration
 
-<html lang="en">
+#### + key points
+    - docker
+    - docker compose
+    - volumes
+    - networking
+    - SSL/TLS
+    - nginx
+    - wordpress
+    - mariadb
 
-<head>
-
-</head>
-
-<body>
-    <h1> Inception.42 </h1>
-    <h3> ( system administration ) <h3>
 
 <strong>__ virtualize several Docker images __<strong>
 
-<p> a set up of a small infrastructure composed of different services.<p>
+#### Goal:
+    set_up of a small infrastructure composed of different services
 
-<h4>  SSL/TLS</h4>
-<h6>  Secure Sockets Layer - Transport Layer Security </h6>
-<p>
-    ( TLS and SSL are for the same roles, TLS is an updated service but SSL is deprecated )
-    Etablishing Encrybtion conection layer/tube between hosts { server/clinet }
-</p>
+#### Diagram (plantuml)
+```plantuml
 
-</body>
-</html>
+classDiagram
+    class Nginx {
+        +start()
+        +stop()
+    }
 
-<!--  
-    #NGINIX https://www.plesk.com/blog/various/nginx-configuration-guide/
+    class WordPress {
+        +createPost()
+        +editPost()
+        +deletePost()
+    }
+
+    class MariaDB {
+        +connect()
+        +readData()
+        +writeData()
+    }
+
+    Nginx --> WordPress : Tunnel Proxy
+    WordPress --> MariaDB : Read/Write Data
+```
 
 
--->
+#### meanings:
+    -  SSL/TLS
+        Secure Sockets Layer - Transport Layer Security
+         ( TLS and SSL are for the same roles, TLS is an updated service but SSL is deprecated )
+            is for Etablishing Encrybtion conection layer/tube between hosts { server/clients }
+
+
+#### resources:
+
++ https://www.docker.com/ 
++ NGINIX https://www.plesk.com/blog/various/nginx-configuration-guide
++ https://developer.wordpress.org/advanced-administration/before-install/multiple-instances/
++
