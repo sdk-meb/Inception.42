@@ -4,49 +4,51 @@ include srcs/.env
 export YAML
 export NAME
 export USER
+export services_path=$(PWD)/srcs/requirements
 
-CMD=$(cmd)
 
-${CMD}:
-	@printf " $(CMD) ${NAME}...\n"
-	@export services_path="$(PWD)/srcs/requirements"; \
-	docker compose -f $(YAML) $(CMD)
+${compose}:
+	@echo -n "exec: " 
+	docker compose -f $(YAML) $(compose)
+
+.PHONY: all down re clean fclean build destroy up
+
+up:
+	docker compose --env-file srcs/.env -f $(YAML) up --detach
 
 ${NAME}: build
 
-# ?? no detaching -> runs in the foreground
-# runs in the background as a detached process / 
-build:
-	@mkdir -p --mode=766 /home/$(USER)/data/wordpress
-	@mkdir -p --mode=766 /home/$(USER)/data/mariadb
+build: creat_data
 	@docker build --tag=floor:latest srcs/requirements/tools
 	@printf "Building configuration ${NAME}...\n"
-	@export services_path="$(PWD)/srcs/requirements"; \
 	docker compose  --env-file srcs/.env -f $(YAML) up --build --detach
 
 all: build
 
-clean: down
-	@printf "cleaning ... \n"
-	@yes | { \
-		\
-		docker container prune; \
-  		docker image prune ; \
-    	docker network prune; \
-    	docker volume prune; \
-	}
 
 down:
-	@export services_path="$(PWD)/srcs/requirements"; \
-	docker compose -f $(YAML) down --volumes
-	@sudo rm -rf /tmp/data
-	@printf "${NAME} down! \n"
+	docker compose -f $(YAML) down
+
+clean: sudo/clean_data
+	@docker compose -f $(YAML) down --volumes
+
 
 re: clean all
 
-.PHONY: all down re clean fclean build
 
 fclean: clean
-	@printf "Remove unused docker data ...\n"
-	@docker system prune --all --volumes --force
+	@docker compose rm mariadb nginx wordpress --stop --volumes 
+
+
+destroy: fclean
+	@docker system prune --volumes --all --force \
+		--filter "label=lab=inception"
+
+creat_data:
+	@mkdir -p ${HOME}/data
+	@mkdir -p --mode=766 ${HOME}/data/wordpress
+	@mkdir -p --mode=766 ${HOME}/data/mariadb
+
+sudo/clean_data:
+	sudo -k rm -rf ${HOME}/data
 

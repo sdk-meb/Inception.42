@@ -1,11 +1,10 @@
 #
-  #---------------------------------------------------------------------------#
-   #
-    # # docker compose /`> yml file
-   #
-  #----------------------------------------------------------------------#
+#---------------------------------------------------------------------------#
 #
-version: '3.8'
+# # docker compose /`> yml file
+#
+#----------------------------------------------------------------------#
+#
 
 services:
 
@@ -16,6 +15,11 @@ services:
     build:
       context: $services_path/nginx
       dockerfile: Dockerfile
+      labels:
+        - app.images.lab=inception
+        - lab=inception
+    labels:
+      - app.containers.lab=inception
     env_file: .env
     ports:
       - "443:443"
@@ -30,7 +34,13 @@ services:
     image: mariadb:wp
     container_name: mariadb
     restart: on-failure
-    build: $services_path/mariaDB
+    build:
+      context: $services_path/mariaDB
+      labels:
+        - app.images.lab=inception
+        - lab=inception
+    labels:
+      - app.containers.lab=inception
     env_file: .env
     volumes:
       - db:/var/lib/mysql
@@ -45,7 +55,13 @@ services:
     env_file:
       - .env
     restart: on-failure
-    build: $services_path/wordpress
+    build:
+      context: $services_path/wordpress
+      labels:
+        - app.images.lab=inception
+        - lab=inception
+    labels:
+      - app.containers.lab=inception
     volumes:
       - wp-db:/var/www/wordpress
     networks:
@@ -59,7 +75,10 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /home/${USER}/data/mariadb
+      device: ${HOME}/data/mariadb
+    labels:
+      - app.volumes.lab=inception
+      - lab=inception
   # WordPress website
   db:
     name: ws-db
@@ -67,8 +86,14 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /home/${USER}/data/wordpress
+      device: ${HOME}/data/wordpress
+    labels:
+      - app.volumes.lab=inception
+      - lab=inception
 
 networks:
   inc@net:
     name: inc@net
+    labels:
+      - app.networks.lab=inception
+      - lab=inception
