@@ -6,7 +6,7 @@
 # debian as floor base
 FROM floor:latest
 
-RUN apt install -y mariadb-server mariadb-client
+RUN apt install -y mariadb-server 
 
 EXPOSE 3306
 
