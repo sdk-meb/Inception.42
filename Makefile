@@ -4,46 +4,47 @@ include srcs/.env
 export YAML
 export NAME
 export USER
+export db_name
 export services_path=$(PWD)/srcs/requirements
 
 
-${compose}:
-	@echo -n "exec: " 
-	docker compose -f $(YAML) $(compose)
+# -----
+%:
+	@docker compose -f $(YAML) $*
 
-.PHONY: all down re clean fclean build destroy up
 
-up:
-	docker compose --env-file srcs/.env -f $(YAML) up --detach
+# -----
+.PHONY: ${NAME} all re clean fclean build destroy up
 
-${NAME}: build
+
+# -----
+${NAME}: all
+
+all: build
 
 build: creat_data
 	@docker build --tag=floor:latest srcs/requirements/tools
 	@printf "Building configuration ${NAME}...\n"
-	docker compose  --env-file srcs/.env -f $(YAML) up --build --detach
+	@docker compose  --env-file srcs/.env -f $(YAML) up --build --detach
 
-all: build
+up:
+	@docker compose --env-file srcs/.env -f $(YAML) up --detach
 
 
-down:
-	docker compose -f $(YAML) down
-
+# -----
 clean: sudo/clean_data
 	@docker compose -f $(YAML) down --volumes
 
-
 re: clean all
 
-
-fclean: clean
-	@docker compose rm mariadb nginx wordpress --stop --volumes 
-
+# fclean: clean
 
 destroy: fclean
-	@docker system prune --volumes --all --force \
+	@docker system prune --volumes --force \
 		--filter "label=lab=inception"
 
+
+# -----
 creat_data:
 	@mkdir -p ${HOME}/data
 	@mkdir -p --mode=766 ${HOME}/data/wordpress
