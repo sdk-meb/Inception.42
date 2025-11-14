@@ -75,7 +75,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ${HOME}/data/mariadb
+      device: ${HOME}/data/wordpress
     labels:
       - app.volumes.lab=inception
       - lab=inception
@@ -86,7 +86,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ${HOME}/data/wordpress
+      device: ${HOME}/data/mariadb
     labels:
       - app.volumes.lab=inception
       - lab=inception

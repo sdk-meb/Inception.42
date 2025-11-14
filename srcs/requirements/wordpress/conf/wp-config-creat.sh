@@ -15,10 +15,11 @@ rootable=--allow-root
 
 #__ Download and install WordPress
 
+# [moved to dockerfile]
 # Download 6.3 version of WordPress
-    wp core download $rootable \
-        --context=. \
-        --version=6.3 
+    # wp core download $rootable \
+    #     --context=. \
+    #     --version=6.3 
 
 # waiting for databse configuration
     sleep 3 #  no--skip-ckeck 

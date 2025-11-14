@@ -21,11 +21,16 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
         mkdir --mode=775 -p  /var/www/wordpress
 
 WORKDIR  /var/www/wordpress
+
+RUN wp core download --allow-root \
+        --context=. \
+        --version=6.3 
+
 EXPOSE 9000
 
-COPY ./conf/wp-config-creat.sh /tmp/wp.sh
+COPY ./conf/wp-config-creat.sh /sbin/wp
 
 # config script as enterpoint 
-ENTRYPOINT ["bash", "/tmp/wp.sh"]
+ENTRYPOINT ["bash", "/sbin/wp"]
 
 CMD [ "/usr/sbin/php-fpm7.4", "-F"]

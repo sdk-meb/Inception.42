@@ -6,5 +6,4 @@
 #   base floor
 FROM debian:bullseye
 
-RUN	apt update &&\
-    apt upgrade --yes
+RUN	apt update

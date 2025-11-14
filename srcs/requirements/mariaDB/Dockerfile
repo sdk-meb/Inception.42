@@ -10,6 +10,6 @@ RUN apt install -y mariadb-server
 
 EXPOSE 3306
 
-COPY ./conf/creat_db.sh /tmp/db.sh
+COPY ./conf/creat_db.sh /sbin/db.setup
 
-CMD ["sh", "/tmp/db.sh"]
+CMD ["sh", "/sbin/db.setup"]
