@@ -55,4 +55,4 @@ classDiagram
 + https://www.docker.com/ 
 + NGINIX https://www.plesk.com/blog/various/nginx-configuration-guide
 + https://developer.wordpress.org/advanced-administration/before-install/multiple-instances/
-+
++ https://mariadb.com/docs
