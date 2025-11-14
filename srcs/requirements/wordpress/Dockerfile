@@ -22,9 +22,9 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 
 WORKDIR  /var/www/wordpress
 
-RUN wp core download --allow-root \
-        --context=. \
-        --version=6.3 
+# RUN wp core download --allow-root \
+#         --context=. \
+#         --version=6.3 
 
 EXPOSE 9000
 

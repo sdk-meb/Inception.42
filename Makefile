@@ -1,12 +1,9 @@
 #* Makefile - v3 *#
 include srcs/.env
 
-export YAML
-export NAME
-export USER
 export db_name
 export services_path=$(PWD)/srcs/requirements
-
+export LAB_NAME=inception
 
 # -----
 %:
@@ -14,21 +11,15 @@ export services_path=$(PWD)/srcs/requirements
 
 
 # -----
-.PHONY: ${NAME} all re clean fclean build destroy up
+.PHONY: ${NAME} all re clean fclean destroy
 
 
 # -----
 ${NAME}: all
 
-all: build
-
-build: creat_data
-	@docker build --tag=floor:latest srcs/requirements/tools
-	@printf "Building configuration ${NAME}...\n"
+all: create_data_path
+	@docker build --tag=floor:latest ${services_path}/tools
 	@docker compose  --env-file srcs/.env -f $(YAML) up --build --detach
-
-up:
-	@docker compose --env-file srcs/.env -f $(YAML) up --detach
 
 
 # -----
@@ -37,15 +28,16 @@ clean: sudo/clean_data
 
 re: clean all
 
-# fclean: clean
+fclean: clean
 
-destroy: fclean
+
+destroy/%:
 	@docker system prune --volumes --force \
 		--filter "label=lab=inception"
 
 
 # -----
-creat_data:
+create_data_path:
 	@mkdir -p ${HOME}/data
 	@mkdir -p --mode=766 ${HOME}/data/wordpress
 	@mkdir -p --mode=766 ${HOME}/data/mariadb
@@ -53,3 +45,23 @@ creat_data:
 sudo/clean_data:
 	sudo -k rm -rf ${HOME}/data
 
+
+
+clean/1:
+	docker compose -f $(YAML) down
+
+# Level 2: Bring down services
+clean/2: sudo/clean_data
+	docker compose -f $(YAML) down --volume
+
+# Level 3: Remove stopped services
+clean/3:
+	docker compose -f $(YAML) rm -vsa
+
+# Level 4: Prune unused elements
+clean/4:
+	docker system prune -a --volumes --filter "label=lab=$(LAB_NAME)"
+
+# Level 5: Remove all images with a specific label
+clean/5:
+	docker rmi $(docker images -q --filter "label=lab=$(LAB_NAME)")

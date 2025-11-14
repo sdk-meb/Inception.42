@@ -1,9 +1,13 @@
 #! /usr/bin/sh
 
-if [ ! -d /var/lib/mysql/$db_name ]; then
+set -x
 
-    sed -i "/bind-address/s/127.0.0.1/0.0.0.0/g" /etc/mysql/mariadb.conf.d/50-server.cnf
-    service mariadb start
+sed -i "/bind-address/s/127.0.0.1/0.0.0.0/g" /etc/mysql/mariadb.conf.d/50-server.cnf
+
+if [ ! -d /var/lib/mysql/$db_name ]; then
+service mariadb start
+# mysqld_safe --skip-grant-tables &
+
 
 #   new database creation
 #   also new user by it id-pass
@@ -31,4 +35,10 @@ if [ ! -d /var/lib/mysql/$db_name ]; then
 
 fi
 
-exec mysqld
+
+exec mysqld || true
+
+# set +x
+# while true; do
+#     continue
+# done
