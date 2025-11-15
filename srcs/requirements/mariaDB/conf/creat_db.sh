@@ -5,8 +5,9 @@ set -x
 sed -i "/bind-address/s/127.0.0.1/0.0.0.0/g" /etc/mysql/mariadb.conf.d/50-server.cnf
 
 if [ ! -d /var/lib/mysql/$db_name ]; then
-service mariadb start
-# mysqld_safe --skip-grant-tables &
+
+    service mariadb start
+    # mysqld_safe --skip-grant-tables &
 
 
 #   new database creation
@@ -32,13 +33,13 @@ service mariadb start
 
     sleep 1
     service mariadb stop 
-
+else
+    mkdir -p /run/mysqld
+    chown -R mysql:mysql /run/mysqld
+    chmod 755 /run/mysqld
 fi
 
 
-exec mysqld || true
+exec mysqld
 
-# set +x
-# while true; do
-#     continue
-# done
+

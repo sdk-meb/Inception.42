@@ -41,10 +41,9 @@ sudo/clean_data:
 
 # ----- Clean Levels
 .PHONY: clean clean/2 clean/3 clean/4 clean/5
-clean:
-	docker compose -f $(YAML) down
+clean: down
 
-clean/2: sudo/clean_data
+clean/2: sudo/clean_data 
 	docker compose -f $(YAML) down --volumes
 
 clean/3: clean/2
