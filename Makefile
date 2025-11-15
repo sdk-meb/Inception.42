@@ -11,7 +11,7 @@ export LAB_NAME=inception
 
 
 # -----
-.PHONY: ${NAME} all re clean fclean destroy
+.PHONY: ${NAME} all re fclean 
 
 
 # -----
@@ -22,21 +22,14 @@ all: create_data_path
 	@docker compose  --env-file srcs/.env -f $(YAML) up --build --detach
 
 
-# -----
-clean: sudo/clean_data
-	@docker compose -f $(YAML) down --volumes
 
 re: clean all
 
-fclean: clean
+fclean: clean/3
 
 
-destroy/%:
-	@docker system prune --volumes --force \
-		--filter "label=lab=inception"
-
-
-# -----
+# ----- mounted volume path managment
+.PHONY: create_data_path sudo/clean_data
 create_data_path:
 	@mkdir -p ${HOME}/data
 	@mkdir -p --mode=766 ${HOME}/data/wordpress
@@ -46,22 +39,19 @@ sudo/clean_data:
 	sudo -k rm -rf ${HOME}/data
 
 
-
-clean/1:
+# ----- Clean Levels
+.PHONY: clean clean/2 clean/3 clean/4 clean/5
+clean:
 	docker compose -f $(YAML) down
 
-# Level 2: Bring down services
 clean/2: sudo/clean_data
-	docker compose -f $(YAML) down --volume
+	docker compose -f $(YAML) down --volumes
 
-# Level 3: Remove stopped services
-clean/3:
-	docker compose -f $(YAML) rm -vsa
+clean/3: clean/2
+	docker system prune -f --volumes --filter "label=lab=$(LAB_NAME)"
 
-# Level 4: Prune unused elements
-clean/4:
-	docker system prune -a --volumes --filter "label=lab=$(LAB_NAME)"
+clean/4: clean/2
+	docker image rm $(shell docker images -q --filter "label=lab=$(LAB_NAME)")
 
-# Level 5: Remove all images with a specific label
-clean/5:
-	docker rmi $(docker images -q --filter "label=lab=$(LAB_NAME)")
+clean/5: clean/2
+	docker system prune -a -f --volumes --filter "label=lab=$(LAB_NAME)"

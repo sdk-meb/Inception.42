@@ -16,10 +16,10 @@ services:
       context: $services_path/nginx
       dockerfile: Dockerfile
       labels:
-        - app.images.lab=inception
-        - lab=inception
+        - app.images.lab=${LAB_NAME}
+        - lab=${LAB_NAME}
     labels:
-      - app.containers.lab=inception
+      - app.containers.lab=${LAB_NAME}
     env_file: .env
     ports:
       - "443:443"
@@ -37,10 +37,10 @@ services:
     build:
       context: $services_path/mariaDB
       labels:
-        - app.images.lab=inception
-        - lab=inception
+        - app.images.lab=${LAB_NAME}
+        - lab=${LAB_NAME}
     labels:
-      - app.containers.lab=inception
+      - app.containers.lab=${LAB_NAME}
     env_file: .env
     volumes:
       - db:/var/lib/mysql
@@ -58,10 +58,10 @@ services:
     build:
       context: $services_path/wordpress
       labels:
-        - app.images.lab=inception
-        - lab=inception
+        - app.images.lab=${LAB_NAME}
+        - lab=${LAB_NAME}
     labels:
-      - app.containers.lab=inception
+      - app.containers.lab=${LAB_NAME}
     volumes:
       - wp-db:/var/www/wordpress
     networks:
@@ -77,8 +77,8 @@ volumes:
       o: bind
       device: ${HOME}/data/wordpress
     labels:
-      - app.volumes.lab=inception
-      - lab=inception
+      - app.volumes.lab=${LAB_NAME}
+      - lab=${LAB_NAME}
   # WordPress website
   db:
     name: ws-db
@@ -88,12 +88,12 @@ volumes:
       o: bind
       device: ${HOME}/data/mariadb
     labels:
-      - app.volumes.lab=inception
-      - lab=inception
+      - app.volumes.lab=${LAB_NAME}
+      - lab=${LAB_NAME}
 
 networks:
   inc@net:
     name: inc@net
     labels:
-      - app.networks.lab=inception
-      - lab=inception
+      - app.networks.lab=${LAB_NAME}
+      - lab=${LAB_NAME}
