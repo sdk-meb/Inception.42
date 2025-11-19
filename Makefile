@@ -1,13 +1,15 @@
 #* Makefile - v3 *#
-include srcs/.env
+include $(dir $(firstword $(MAKEFILE_LIST)))srcs/.env
 
 export db_name
-export services_path=$(PWD)/srcs/requirements
+project_path=$(dir $(firstword $(MAKEFILE_LIST)))
+requirements=$(project_path)srcs/requirements
+export services_path=./requirements
 export LAB_NAME=inception
 
-# -----
-%:
-	@docker compose -f $(YAML) $*
+# # -----
+# %:
+# 	@docker compose -f $(YAML) $*
 
 
 # -----
@@ -18,8 +20,8 @@ export LAB_NAME=inception
 ${NAME}: all
 
 all: create_data_path
-	@docker build --tag=floor:latest ${services_path}/tools
-	@docker compose  --env-file srcs/.env -f $(YAML) up --build --detach
+	@docker build --tag=floor:latest ${requirements}/tools
+	@docker compose  --env-file $(project_path)srcs/.env -f $(project_path)$(YAML) up --build --detach
 
 
 
@@ -44,7 +46,7 @@ sudo/clean_data:
 clean: down
 
 clean/2: sudo/clean_data 
-	docker compose -f $(YAML) down --volumes
+	docker compose -f $(project_path)$(YAML) down --volumes
 
 clean/3: clean/2
 	docker system prune -f --volumes --filter "label=lab=$(LAB_NAME)"
