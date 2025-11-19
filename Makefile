@@ -8,8 +8,8 @@ export services_path=./requirements
 export LAB_NAME=inception
 
 # # -----
-# %:
-# 	@docker compose -f $(YAML) $*
+%:
+	@docker compose -f $(project_path)$(YAML) $*
 
 
 # -----
@@ -19,8 +19,10 @@ export LAB_NAME=inception
 # -----
 ${NAME}: all
 
-all: create_data_path
+floor:
 	@docker build --tag=floor:latest ${requirements}/tools
+
+all: create_data_path floor
 	@docker compose  --env-file $(project_path)srcs/.env -f $(project_path)$(YAML) up --build --detach
 
 
