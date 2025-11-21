@@ -1,8 +1,18 @@
 #! /usr/bin/sh
 
-set -x
+set -xe
 
 sed -i "/bind-address/s/127.0.0.1/0.0.0.0/g" /etc/mysql/mariadb.conf.d/50-server.cnf
+
+# Compliance
+chmod 644 /etc/mysql/mariadb.cnf
+
+mkdir -p /run/mysqld
+chmod 755 /run/mysqld
+chmod -R 755 /var/lib/mysql/
+chown -R mysql:mysql /run/mysqld
+chown -R mysql:mysql /var/lib/mysql/
+
 
 if [ ! -d /var/lib/mysql/$db_name ]; then
 
@@ -33,10 +43,6 @@ if [ ! -d /var/lib/mysql/$db_name ]; then
 
     sleep 1
     service mariadb stop 
-else
-    mkdir -p /run/mysqld
-    chown -R mysql:mysql /run/mysqld
-    chmod 755 /run/mysqld
 fi
 
 

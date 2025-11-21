@@ -11,7 +11,7 @@ services:
   nginx:
     image: nginx:wp
     container_name: nginx
-    restart: on-failure
+    restart: always
     build:
       context: $services_path/nginx
       dockerfile: Dockerfile
@@ -33,7 +33,7 @@ services:
   mariadb:
     image: mariadb:wp
     container_name: mariadb
-    restart: on-failure
+    restart: always
     build:
       context: $services_path/mariaDB
       labels:
@@ -54,7 +54,7 @@ services:
       - mariadb
     env_file:
       - .env
-    restart: on-failure
+    restart: always
     build:
       context: $services_path/wordpress
       labels:

@@ -1,5 +1,7 @@
 #! /usr/bin/bash
 
+set -ex
+
 mkdir -p --mode=777 /run/php
 if [ ! -e /run/php/php7.4-fpm.pid ]; then
     touch /run/php/php7.4-fpm.pid
